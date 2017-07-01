@@ -44,6 +44,11 @@ guess_system_package_manager(){
         SYSTEM_PACKAGE_MANAGER_INSTALL="emerge"
         SYSTEM_PACKAGE_MANAGER_UPDATE="emerge --sync"
         PIP_INSTALL_CMD="pip  install --user "
+    elif [ "`which port`" != "" ]; then
+    	SYSTEM_PACKAGE_MANAGER="port"
+    	SYSTEM_PACKAGE_TYPE="darwin"
+    	SYSTEM_PACKAGE_MANAGER_INSTALL="port install"
+    	SYSTEM_PACKAGE_MANAGER_UPDATE="port selfupdate"
     fi
 
     if [ $SYSTEM_PACKAGE_TYPE == "rpm" ]; then
@@ -52,6 +57,8 @@ guess_system_package_manager(){
         SYSTEM_PACKAGE_SET="vim-gnome ctags cscope git wget libpcre3 libpcre3-dev libyaml-dev python-pip python-dev libclang-dev"
     elif [ $SYSTEM_PACKAGE_TYPE == "archpkg" || $SYSTEM_PACKAGE_TYPE == "ebuild" ]; then
         SYSTEM_PACKAGE_SET="gvim ctags cscope git wget pcre libyaml python-pip python clang"
+    elif [ $SYSTEM_PACKAGE_TYPE == "darwin" ]; then
+    	SYSTEM_PACKAGE_SET="MacVim ctags cscope git wget pcre libyaml py27-pip python27 clang-4.0"
     fi
 
     PIP_PACKAGE_SET="clang watchdog"
@@ -140,7 +147,7 @@ fi
 guess_system_package_manager
 if [ -z $SYSTEM_PACKAGE_MANAGER ]; then
     echo "Identifying the system package manager failed. Currently supported ones are:
-    'dnf', 'apt-get', 'zypper', 'yum', 'pacman', 'emerge'
+    'dnf', 'apt-get', 'zypper', 'yum', 'pacman', 'emerge', 'port'
 
 Should you want to add support for new one, it should be easy enough to modify the
 'guess_system_package_manager()' function which can be found in 'install.sh' script.
@@ -286,4 +293,3 @@ echo "Setting permissions ..."
 echo "----------------------------------------------------------------------------"
 echo "$passwd" | sudo -S chown $USER $HOME/Desktop/yavide.desktop
 echo "$passwd" | sudo -S chown -R $USER $YAVIDE_INSTALL_DIR
-
